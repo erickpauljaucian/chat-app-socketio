@@ -9,6 +9,7 @@ const { username, room } = Qs.parse(location.search, {
 });
 
 const socket = io();
+socket.connect('https://socketio.erickdelrey.rocks');
 
 // Join chatroom
 socket.emit('joinRoom', { username, room });
