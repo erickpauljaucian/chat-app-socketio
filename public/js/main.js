@@ -8,7 +8,7 @@ const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
-const socket = io();
+const socket = io(); //access with script tag -> New Web Socket connection
 socket.connect('https://socketio.erickdelrey.rocks');
 
 // Join chatroom

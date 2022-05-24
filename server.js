@@ -12,15 +12,36 @@ const {
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {cors: {origin: "*"}});
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
 const botName = "Chat Bot";
 
-// Run when client connects
+// Run when a client connects
 io.on("connection", (socket) => {
+
+  console.log("New Web Socket connection");
+  
+  socket.on("join-room", ({ username, room, companyId }) => {
+    console.log(`joingRoom event: [username: ${username}] [room: ${room}] [socket_id:] ${socket.id}`);
+    const user = userJoin(socket.id, username, room);
+    socket.join(user.room);
+  });
+
+  socket.on("send-message", message => {
+    const user = getCurrentUser(socket.id);
+    console.log(`chatMessage event: [message: ${message}] from user: ${user.username}`);
+    socket.to(user.room).emit("message", formatMessage(user.username, message));
+  });
+  
+
+
+
+
+
+
   socket.on("joinRoom", ({ username, room }) => {
 
     console.log(`joingRoom event: [username: ${username}] [room: ${room}]`);
@@ -75,4 +96,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 
+//Run server
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
